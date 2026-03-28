@@ -23,7 +23,10 @@ const io = new Server(server, {
 app.set("io", io);
 
 // ── Middleware ──────────────────────────────────────────
-app.use(cors());
+const allowedOrigins = process.env.CLIENT_URL
+    ? [process.env.CLIENT_URL, "http://localhost:5173"]
+    : "*";
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 
 // ── Routes ─────────────────────────────────────────────

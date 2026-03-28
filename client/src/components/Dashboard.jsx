@@ -3,6 +3,8 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const Dashboard = ({ refreshKey, onTransactionDeleted }) => {
     const { token } = useAuth();
     const [transactions, setTransactions] = useState([]);
@@ -38,7 +40,7 @@ const Dashboard = ({ refreshKey, onTransactionDeleted }) => {
 
     // Socket.io real-time listener
     useEffect(() => {
-        const socket = io("http://localhost:5000");
+        const socket = io(API_URL);
 
         socket.on("newTransaction", (txn) => {
             setTransactions((prev) => [txn, ...prev].slice(0, 50));
@@ -92,7 +94,7 @@ const Dashboard = ({ refreshKey, onTransactionDeleted }) => {
     const handleDownloadReport = () => {
         const params = selected.size > 0 ? `?ids=${[...selected].join(",")}` : "";
         // For PDF download with auth, we need to pass token as query param
-        window.open(`http://localhost:5000/api/transactions/report${params}${params ? "&" : "?"}token=${token}`, "_blank");
+        window.open(`${API_URL}/api/transactions/report${params}${params ? "&" : "?"}token=${token}`, "_blank");
     };
 
     // ── Delete Transaction ───────────────────────────
